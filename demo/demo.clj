@@ -11,6 +11,8 @@
 
 (def path "/Users/genekim/book5")
 
+(comment)
+
 (def g (git/discover-repo path))
 
 (def g (git/load-repo path))

@@ -4,6 +4,8 @@
             [archaeologist.git :as agit]
             [archaeologist.fs :as fs]))
 
+(def path "/Users/genekim/book5")
+
 (defn xform-log
   " turn jgit data structure to more clj-friendly data "
   [l]
