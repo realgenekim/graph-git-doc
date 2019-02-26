@@ -162,7 +162,8 @@
    :data     {:values (extract-wc-data wc)}
    :encoding {
               :x {:field "date", :type "temporal"},
-              :y {:field "wordcount", :type "quantitative"}}
+              :y {:field "wordcount", :type "quantitative"}
+              :color {:value "firebrick"}}
    :mark     "line"})
 
 (oz/v! (wc-line-plot))
