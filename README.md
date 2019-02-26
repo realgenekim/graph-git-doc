@@ -23,7 +23,7 @@ This program uses the fantastic [oz](https://github.com/metasoarous/oz) library 
 
 ## License
 
-Copyright © 2019 Gene Kiom
+Copyright © 2019 Gene Kim
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
