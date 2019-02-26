@@ -12,7 +12,7 @@ This program uses as input:
 
 This program uses the fantastic [oz](https://github.com/metasoarous/oz) library to generate the vega-lite diagrams.
 
-![Graph](./graphs/visualization.png)
+![Graph](./graphs/visualization.svg)
 
 
 ## Usage
