@@ -7,7 +7,8 @@
     [graph-git-doc.wordcountcsv :as wc]))
 
 
-(def commits (c/get-commit-with-lines))
+(oz/start-plot-server!)
+
 
 (defn extract-data [commits]
   (->> (map (fn [c]
@@ -45,24 +46,16 @@
               :y {:field "lines", :type "quantitative"}}})
 
 
-(oz/v! (gen-graph commits))
-(oz/v! (gen-graph-simple commits))
+(defn graph-word-count []
+  (let [commits (c/get-commit-with-lines)]
+    (gen-graph-simple commits)))
+
+
+#_ (oz/v! (gen-graph commits))
+#_ (oz/v! (gen-graph-simple commits))
 #_(oz/start-plot-server!)
 
-(def hash-to-changes (log/gen-hash-to-changes))
-
-
-#_(:commit (first commits))
-#_(get hash-to-changes (:commit (first commits)))
-
-(defn merge-hash-changes [c]
-  (assoc c :changes
-           (:changes (get hash-to-changes (:commit c)))))
-
-(defn get-merged-changes []
-  (map merge-hash-changes commits))
-
-(def commits-with-changes (get-merged-changes))
+;;;;;  strip-plot of changes
 
 ; strip plot: https://vega.github.io/vega-lite/examples/tick_strip.html
 
@@ -82,6 +75,7 @@
               :x {:field "date", :type "temporal"},
               :y {:field "lines", :type "quantitative"}}})
 
+#_ (oz/v! (gen-strip-plot-simple))
 
 (defn gen-date [c]
   {:date  (.format (java.text.SimpleDateFormat. "MM/dd/yy")
@@ -128,15 +122,34 @@
 #_ (extract-change-range x1)
 
 
-(defn gen-strip-plot []
+(defn gen-strip-plot [commits-with-changes]
   {:width    600
    :data     {:name   "table",
               :values (extract-change-ranges commits-with-changes)}
    :mark     "tick",
    :encoding {
               :x {:field "date", :type "temporal"},
-              :y {:field "lines", :type "quantitative"}}})
+              :y {:field "lines", :type "quantitative"
+                  :axis {:title "lines changed"}}}})
 
+(def hash-to-changes (log/gen-hash-to-changes))
+
+
+#_(:commit (first commits))
+#_(get hash-to-changes (:commit (first commits)))
+
+(defn merge-hash-changes [c]
+  (assoc c :changes
+           (:changes (get hash-to-changes (:commit c)))))
+
+(defn get-merged-changes []
+  (map merge-hash-changes commits))
+
+(defn graph-strip-plot []
+  (let [commits-with-changes (get-merged-changes)]
+    (gen-strip-plot commits-with-changes)))
+
+#_ (def commits-with-changes (get-merged-changes))
 
 
 #_ (first commits-with-changes)
@@ -146,12 +159,12 @@
 ; works!
 
 
-(oz/v! (gen-strip-plot))
+#_ (oz/v! (graph-strip-plot))
 
 ;
 ; word count
 ;
-(def wc (wc/read-csv))
+#_ (def wc (wc/read-csv))
 
 (defn extract-wc-data [wc]
   (->> (map (fn [c]
@@ -169,7 +182,7 @@
 
 #_ (xform-wc-row (first wc))
 
-(defn wc-line-plot []
+(defn wc-line-plot [wc]
   {:width    600
    :data     {:values (extract-wc-data wc)}
    :encoding {
@@ -178,7 +191,9 @@
               :color {:value "firebrick"}}
    :mark     "line"})
 
-(oz/v! (wc-line-plot))
+(defn graph-wc-line-plot []
+  (let [wc (wc/read-csv)]
+    (wc-line-plot wc)))
 
 ;
 ;
@@ -187,8 +202,8 @@
 
 (defn composite-graph []
   {:layer [
-           (wc-line-plot)
-           (gen-strip-plot)]
+           (graph-wc-line-plot)
+           (graph-strip-plot)]
    :resolve {:scale {:y "independent"}}})
 
 
