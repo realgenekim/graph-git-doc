@@ -1,14 +1,29 @@
 # graph-git-doc
 
-A Clojure library designed to ... well, that part is up to you.
+Analyze git repo of _Project Unicorn_ manuscript, and graph daily word
+count and the lines changed in the generated Markdown manuscript.
+
+This program uses as input:
+
+- [clj-jgit](https://github.com/clj-jgit/clj-jgit) library to get list of all commit hashes
+- [archaeologist](https://github.com/wildbit/archaeologist) library to get file versions at each commit (to get number of lines)
+- output of `git log --patch-with-stat --unified=1 manuscript.mmd` to get list of all lines changed upon each commit
+- exported daily work log in CSV format
+
+This program uses the fantastic [oz](https://github.com/metasoarous/oz) library to generate the vega-lite diagrams.
+
+![Graph](./graphs/visualization.png)
+
 
 ## Usage
 
-FIXME
+- go into ozdemo namespace
+- in REPL, run `(oz/v! (composite-graph))`
+
 
 ## License
 
-Copyright © 2019 FIXME
+Copyright © 2019 Gene Kiom
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
