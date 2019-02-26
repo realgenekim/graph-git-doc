@@ -3,7 +3,8 @@
     [oz.core :as oz]
     [clojure.data.json :as json]
     [graph-git-doc.core :as c]
-    [graph-git-doc.git-log-text :as log]))
+    [graph-git-doc.git-log-text :as log]
+    [graph-git-doc.wordcountcsv :as wc]))
 
 
 (def commits (c/get-commit-with-lines))
@@ -134,6 +135,53 @@
 ; works!
 
 (oz/v! (gen-strip-plot))
+
+;
+; word count
+;
+(def wc (wc/read-csv))
+
+(defn extract-wc-data [wc]
+  (->> (map (fn [c]
+              {:date  (:date c)
+               :wordcount (:wordcount c)})
+            wc)))
+
+(defn extract-data [commits]
+  (->> (map (fn [c]
+              {:date  (.format (java.text.SimpleDateFormat. "MM/dd/yy")
+                               (:date c))
+               :lines (:lines c)})
+            commits)
+       (remove #(nil? (:lines %)))))
+
+#_ (xform-wc-row (first wc))
+
+(defn wc-line-plot []
+  {:width    600
+   :data     {:values (extract-wc-data wc)}
+   :encoding {
+              :x {:field "date", :type "temporal"},
+              :y {:field "wordcount", :type "quantitative"}}
+   :mark     "line"})
+
+(oz/v! (wc-line-plot))
+
+;
+;
+; composite
+;
+
+(defn composite-graph []
+  {:layer [
+           (wc-line-plot)
+           (gen-strip-plot)]
+   :resolve {:scale {:y "independent"}}})
+
+
+(oz/v! (composite-graph))
+
+
 
 ;
 ;

@@ -1,6 +1,7 @@
 (ns graph-git-doc.wordcountcsv
   (:require [clojure.data.csv :as csv]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [java-time :as time]))
 
 (defn csv-data->maps
   " turn csv into map: from csv library "
@@ -22,3 +23,19 @@
                  ; convert to map
                  csv-data->maps)]
       rows)))
+
+(defn xform-row
+  " convert dates, and wordcount string->int"
+  [row]
+  {
+   ;:date (time/in (time/local-date "MM/dd/yy" (:date row)))
+   ;:date (.toInstant (.atZone (.atStartOfDay
+   ;                             (time/local-date "MM/dd/yy" (:date row)))
+   ;                           (time/zone-id)))
+   :date (:date row)
+   :wordcount (Integer/parseInt (:wordcount row))})
+
+
+(defn read-csv []
+  (let [rows     (read-csvfile-to-map! "wordcount.csv")]
+    (map xform-row rows)))

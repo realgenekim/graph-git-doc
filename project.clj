@@ -7,6 +7,7 @@
                  [metasoarous/oz "1.5.6"]
                  [org.clojure/data.csv "0.1.4"]
                  [clj-jgit "0.8.10"]
+                 [clojure.java-time "0.3.2"]
                  [archaeologist "0.1.1"]]
 
                  ;[planisphere "0.1.9"]]
