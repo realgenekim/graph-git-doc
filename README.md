@@ -20,6 +20,8 @@ This program uses the fantastic [oz](https://github.com/metasoarous/oz) library 
 - go into ozdemo namespace
 - in REPL, run `(oz/v! (composite-graph))`
 
+Honestly, I'm publishing this just so people can see
+how to use these fantastic libraries.
 
 ## License
 
