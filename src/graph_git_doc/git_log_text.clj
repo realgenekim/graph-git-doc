@@ -2,7 +2,7 @@
 
 (println "hello")
 
-(def lines (clojure.string/split-lines (slurp "/tmp/g")))
+(def lines (clojure.string/split-lines (slurp "git-log.txt")))
 
 (def short (take 300 lines))
 
@@ -80,10 +80,15 @@
                      lm)]
     (apply merge newmaps)))
 
+(defn count-change-sets [cs]
+  (assoc cs :num-changes (count (:changes cs))))
+
 
 (defn find-diffs [cs]
   (->> cs
        (map process-commit)
+       (map count-change-sets)
+       (filter (fn [x] (< (:num-changes x) 80)))
        list-hashes-to-map))
     ;changesets))
     ;(->> (map merge cs changesets)

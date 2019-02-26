@@ -12,3 +12,4 @@ pom.xml.asc
 /.idea
 .hgignore
 .hg/
+git-log.txt
