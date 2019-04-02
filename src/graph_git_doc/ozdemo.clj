@@ -2,7 +2,7 @@
   (:require
     [oz.core :as oz]
     [clojure.data.json :as json]
-    [graph-git-doc.core :as c]
+    [graph-git-doc.manuscript-lines :as c]
     [graph-git-doc.git-log-text :as log]
     [graph-git-doc.wordcountcsv :as wc]))
 
@@ -18,7 +18,7 @@
             commits)
        (remove #(nil? (:lines %)))))
 
-#_(extract-data commits)
+#_ (extract-data commits)
 
 (defn gen-graph [commits]
   {:width    600
@@ -47,13 +47,22 @@
 
 
 (defn graph-word-count []
-  (let [commits (c/get-commit-with-lines)]
+  (let [commits (c/get-commit-with-lines!)]
     (gen-graph-simple commits)))
+
+
+(comment
+  (oz/start-plot-server!)
+  (oz/v!)
+  (oz/v! (graph-word-count))
+
+  (def commits graph-git-doc.manuscript-lines/get-commit-with-lines!)
+  (oz/v! (gen-graph-simple commits)))
 
 
 #_ (oz/v! (gen-graph commits))
 #_ (oz/v! (gen-graph-simple commits))
-#_(oz/start-plot-server!)
+#_ (oz/start-plot-server!)
 
 ;;;;;  strip-plot of changes
 
@@ -83,7 +92,7 @@
 
 
 
-(def x1 (first commits-with-changes))
+;(def x1 (first commits-with-changes))
 
 (defn ranges [c]
   (let [[starts counts]  [(map :start-line2 (:changes c))
@@ -126,13 +135,14 @@
   {:width    600
    :data     {:name   "table",
               :values (extract-change-ranges commits-with-changes)}
-   :mark     "tick",
+   :mark     {:type "tick"
+              :opacity 0.8}
    :encoding {
               :x {:field "date", :type "temporal"},
               :y {:field "lines", :type "quantitative"
-                  :axis {:title "lines changed"}}}})
+                  :axis {:title "line num changed"}}}})
 
-(def hash-to-changes (log/gen-hash-to-changes))
+(def hash-to-changes (log/gen-commit-hash-to-all-diffs))
 
 
 #_(:commit (first commits))
@@ -142,14 +152,20 @@
   (assoc c :changes
            (:changes (get hash-to-changes (:commit c)))))
 
-(defn get-merged-changes []
-  (map merge-hash-changes commits))
+
+
+(defn get-merged-changes! []
+  (let [commits (graph-git-doc.manuscript-lines/get-commit-with-lines!)]
+    (map merge-hash-changes commits)))
 
 (defn graph-strip-plot []
-  (let [commits-with-changes (get-merged-changes)]
+  (let [commits-with-changes (get-merged-changes!)]
     (gen-strip-plot commits-with-changes)))
 
-#_ (def commits-with-changes (get-merged-changes))
+(comment
+  (def commits graph-git-doc.manuscript-lines/get-commit-with-lines!))
+
+#_ (def commits-with-changes (get-merged-changes!))
 
 
 #_ (first commits-with-changes)
@@ -202,8 +218,8 @@
 
 (defn composite-graph []
   {:layer [
-           (graph-wc-line-plot)
-           (graph-strip-plot)]
+           (graph-strip-plot)
+           (graph-wc-line-plot)]
    :resolve {:scale {:y "independent"}}})
 
 
