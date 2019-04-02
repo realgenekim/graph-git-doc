@@ -49,29 +49,22 @@
                          (map #(assoc {} :lines %)))]
     (map merge logs line-counts)))
 
-(defn get-commit-with-lines []
+(defn get-commit-with-lines! []
   (let [logs            (get-log!)
         logs-with-linecount (merge-in-manuscript-line-counts logs)]
     logs-with-linecount))
 
 
-
-#_ (count (get-commit-with-lines))
-#_ (def commits (get-commit-with-lines))
-#_ (map :lines commits)
-
 (comment
   (graph-git-doc.utils/ns-clean)
 
   ;
-  (count (get-commit-with-lines))
+  (count (get-commit-with-lines!))
   ; => 125
 
   ; get all the commmits
-  (def commits (get-commit-with-lines))
+  (def commits (get-commit-with-lines!))
 
   (map :lines commits)
   (map #(select-keys % [:lines :date]) commits))
 
-
-(defn- main [] (println "hello"))

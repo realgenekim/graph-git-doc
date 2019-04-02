@@ -8,7 +8,7 @@
                  [org.clojure/data.csv "0.1.4"]
                  [clj-jgit "0.8.10"]
                  [clojure.java-time "0.3.2"]
-                 [archaeologist "0.1.1"]]
+                 [archaeologist "0.1.1"]])
 
                  ;[planisphere "0.1.9"]]
-  :repl-options {:init-ns graph-git-doc.core})
+  ;:repl-options {:init-ns graph-git-doc.manuscript-lines})
