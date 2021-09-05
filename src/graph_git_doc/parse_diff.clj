@@ -19,6 +19,7 @@
      [[:modify start-line1 count1]
       [:add (+ start-line1 count1) (- count2 count1)]]
      ; count1 is zero
+     ;  {:start-line1 9, :count1 0, :start-line2 9, :count2 5}
      (and (= start-line1 start-line2)
        (> count2 count1)
        (= count1 0))
@@ -28,6 +29,11 @@
      (and (= start-line1 start-line2)
           (= 0 count2))
      [:delete start-line1 (dec count1)]
+     ; delete
+     ;  {:start-line1 12, :count1 6, :start-line2 12, :count2 2}
+     (and (= start-line1 start-line2)
+          (> count1 count2))
+     [:delete start-line1 (- count1 count2)]
 
      :else nil)))
 
