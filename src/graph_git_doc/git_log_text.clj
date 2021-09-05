@@ -21,11 +21,11 @@
   [lines current-set hash-list]
   (let [l (first lines)]
     (when true
-      (do
-        (println "line: " l)
-        (println "set:  " current-set)
-        (println "list: " hash-list)
-        (println "---")))
+      (do))
+        ;(println "line: " l)
+        ;(println "set:  " current-set)
+        ;(println "list: " hash-list)
+        ;(println "---")))
     (if (nil? l)
       ; last line, so return
       (conj hash-list current-set)
