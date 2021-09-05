@@ -18,7 +18,7 @@
 (defn- split-by-commits
   [lines current-set hash-list]
   (let [l (first lines)]
-    (when false
+    (when true
       (do
         (println "line: " l)
         (println "set:  " current-set)
@@ -52,7 +52,7 @@
 
 #_ (def x (split-by-commits (take 500 lines) {} nil))
 
-(defn- parse-diff-line [s]
+(defn parse-diff-line [s]
   " @@ -startline1,count1 +startline2,count2 @@
         https://stackoverflow.com/questions/8259851/using-git-diff-how-can-i-get-added-and-modified-lines-numbers
     returns nil when not valid "
@@ -62,7 +62,15 @@
        :count1      (Integer/parseInt (nth retval 2))
        :start-line2 (Integer/parseInt (nth retval 3))
        :count2      (Integer/parseInt (nth retval 4))}
-      nil)))
+      ; else maybe no second length
+      ; "@@ -1,5 +1 @@"
+      (let [retval2 (re-find #"^@@ \-(\d+),(\d+) \+(\d+) .*$" s)]
+        (if retval2 {:start-line1 (Integer/parseInt (nth retval2 1))
+                     :count1      (Integer/parseInt (nth retval2 2))
+                     :start-line2 (Integer/parseInt (nth retval2 3))
+                     :count2      1}
+          ; else
+          nil)))))
 
 (defn process-commit
   [commit]

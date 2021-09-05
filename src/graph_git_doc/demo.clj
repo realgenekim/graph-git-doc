@@ -9,7 +9,8 @@
   [x]
   (println x "Hello, World!"))
 
-(def path "/Users/genekim/book5")
+;(def path "/Users/genekim/book5")
+(def path "../test-git-repo")
 
 (comment)
 
@@ -26,29 +27,30 @@
 
 (:name (bean (first log)))
 
-{:encoding       #object[sun.nio.cs.UTF_8 0x5a72d4e4 "UTF-8"],
- :parentCount    0,
- :footerLines    [],
- :tree           #object[org.eclipse.jgit.revwalk.RevTree 0x7271bb9e "tree 9e9d436f3cf22595422fb369f379879da2da4fe9 ------"],
- :committerIdent #object[org.eclipse.jgit.lib.PersonIdent
-                         0x510ffd
-                         "PersonIdent[Gene Kim, genek@realgenekim.me, Tue Feb 28 09:23:57 2017 -0800]"],
- :name           "0a1460bf31563c60ca6789a307a0a404975df884",
- :type           1,
- :firstByte      10,
- :authorIdent    #object[org.eclipse.jgit.lib.PersonIdent
-                         0x70cbd142
-                         "PersonIdent[Gene Kim, genek@realgenekim.me, Tue Feb 28 09:23:57 2017 -0800]"],
- :encodingName   nil,
- :id             #object[org.eclipse.jgit.revwalk.RevCommit
-                         0x48c2add4
-                         "commit 0a1460bf31563c60ca6789a307a0a404975df884 1488302637 ----sp"],
- :class          org.eclipse.jgit.revwalk.RevCommit,
- :commitTime     1488302637,
- :parents        #object["[Lorg.eclipse.jgit.revwalk.RevCommit;" 0x37905219 "[Lorg.eclipse.jgit.revwalk.RevCommit;@37905219"],
- :shortMessage   "initial checkin",
- :fullMessage    "initial checkin\n",
- :rawBuffer      #object["[B" 0x5138a27b "[B@5138a27b"]}
+(comment)
+  ;{:encoding       #object[sun.nio.cs.UTF_8 0x5a72d4e4 "UTF-8"],
+  ; :parentCount    0,
+  ; :footerLines    [],
+  ; :tree           #object[org.eclipse.jgit.revwalk.RevTree 0x7271bb9e "tree 9e9d436f3cf22595422fb369f379879da2da4fe9 ------"],
+  ; :committerIdent #object[org.eclipse.jgit.lib.PersonIdent
+  ;                         0x510ffd
+  ;                         "PersonIdent[Gene Kim, genek@realgenekim.me, Tue Feb 28 09:23:57 2017 -0800]"],
+  ; :name           "0a1460bf31563c60ca6789a307a0a404975df884",
+  ; :type           1,
+  ; :firstByte      10,
+  ; :authorIdent    #object[org.eclipse.jgit.lib.PersonIdent
+  ;                         0x70cbd142
+  ;                         "PersonIdent[Gene Kim, genek@realgenekim.me, Tue Feb 28 09:23:57 2017 -0800]"],
+  ; :encodingName   nil,
+  ; :id             #object[org.eclipse.jgit.revwalk.RevCommit
+  ;                         0x48c2add4
+  ;                         "commit 0a1460bf31563c60ca6789a307a0a404975df884 1488302637 ----sp"],
+  ; :class          org.eclipse.jgit.revwalk.RevCommit,
+  ; :commitTime     1488302637,
+  ; :parents        #object["[Lorg.eclipse.jgit.revwalk.RevCommit;" 0x37905219 "[Lorg.eclipse.jgit.revwalk.RevCommit;@37905219"],
+  ; :shortMessage   "initial checkin",
+  ; :fullMessage    "initial checkin\n",
+  ; :rawBuffer      #object["[B" 0x5138a27b "[B@5138a27b"]})
 
 (defn xform-log
   " turn jgit data structure to more clj-friendly data "
@@ -94,6 +96,9 @@
         logs-with-lines (merge-in-manuscript-line-counts logs)]
     logs-with-lines))
 
+(comment
+  (get-commit-with-lines))
+
 
 
 
@@ -111,8 +116,11 @@
 
 (def repo (agit/open-repository (str path "/.git/")))
 
+(def mmd "manuscript.md")
+
 (a/with-repository [repo (agit/open-repository (str path "/.git/"))]
-  (count (slurp (a/read-file repo "HEAD" mmd))))
+  (let [mmd "manuscript.md"]
+    (count (slurp (a/read-file repo "HEAD" mmd)))))
 
 
 (a/list-files repo (a/get-default-version repo))

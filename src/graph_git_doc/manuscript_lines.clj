@@ -6,14 +6,16 @@
             [archaeologist.git :as agit]
             [archaeologist.fs :as fs]))
 
-(def path "/Users/genekim/book5")
+;(def path "/Users/genekim/book5")
+(def path "../test-git-repo")
 
 (defn- xform-log
   " turn jgit data structure to more clj-friendly data
     extract just the date, commit hash"
   [l]
   {:date   (.getWhen (:authorIdent l))
-   :commit (:name l)})
+   :commit (:name l)
+   :raw l})
 
 (defn- get-log!
   " load in all the commits in map form "
@@ -22,7 +24,7 @@
         logs (git/git-log repo)]
     (->> logs
          (map bean)
-         (map #(select-keys % [:name :authorIdent]))
+         (map #(select-keys % [:name :authorIdent :shortMessage]))
          (map xform-log))))
 
 
@@ -31,7 +33,7 @@
     if file doesn't exist in commit, return nil "
   [commit]
   (let [fullpath (str path "/.git/")
-        mmd "manuscript-unicorn/manuscript.mmd"]
+        mmd "manuscript.md"]
     (a/with-repository [repo (agit/open-repository fullpath)]
                        (try
                          (->> (a/read-file repo commit mmd)
