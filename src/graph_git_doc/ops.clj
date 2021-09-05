@@ -61,7 +61,8 @@
        (map :hash))
 
   (->> commits
-       (map gw/add-stats-to-git-commit!))
+       (map gw/add-word-stats-to-git-commit!)
+       (map gw/add-timestamp-to-git-commit!))
 
   ,)
 

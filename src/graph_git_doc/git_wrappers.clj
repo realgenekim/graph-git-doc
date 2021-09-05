@@ -103,7 +103,7 @@
   (def text "ab   d e 123  dd\n 123")
   (s/split text #"\s+"))
 
-(defn add-stats-to-git-commit!
+(defn add-word-stats-to-git-commit!
   [commit]
   (let [hash (:hash commit)
         text (get-manuscript-by-commit-hash! hash)
@@ -112,14 +112,31 @@
                :stats-num-words (count-words text)}]
     (merge commit stats)))
 
-
 (comment
   (def commits (get-git-log!))
-  (add-stats-to-git-commit! (second commits))
+  (add-word-stats-to-git-commit! (second commits))
   (->> commits
-       (map add-stats-to-git-commit!))
+    (map add-word-stats-to-git-commit!))
+
+  ,)
+
+(defn add-timestamp-to-git-commit!
+  "input: map
+   output: map with merged new info"
+  [cs]
+  (let [hash (:hash cs)
+        commits (get-git-log!)
+        commit  (->> commits
+                     (filter #(= (:hash %)
+                                 hash))
+                     first)]
+    (merge commit cs)))
 
 
+(comment
+  (add-timestamp-to-git-commit! {:hash "a0ef4824c7a4478103c705d7c30a557f70c2d78d"
+                                 :abc 123})
+  (add-timestamp-to-git-commit! nil)
   ,)
 
 
