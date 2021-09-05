@@ -4,7 +4,9 @@
     'git log'),
 
   output: parsed diffs
-          {commithash {:start-line1 4, :count1 3, :start-line2 4, :count2 3}")
+          {commithash {:start-line1 4, :count1 3, :start-line2 4, :count2 3}"
+  (:require
+    [graph-git-doc.parse-diff :as pd]))
 
 (def INFILE "git-log.txt")
 
@@ -15,7 +17,7 @@
 (defn- commit-line? [s]
   (re-find #"^commit (\w+)$" s))
 
-(defn- split-by-commits
+(defn split-by-commits
   [lines current-set hash-list]
   (let [l (first lines)]
     (when true
@@ -40,6 +42,11 @@
                  (conj (:lines current-set) l))
                hash-list)))))
 
+(defn list-of-commits
+  " input: none (global lines)
+    output: list of commits "
+  []
+  (split-by-commits lines {} nil))
 
 
 
@@ -69,10 +76,21 @@
                      :count1      (Integer/parseInt (nth retval2 2))
                      :start-line2 (Integer/parseInt (nth retval2 3))
                      :count2      1}
-          ; else
-          nil)))))
+          ; else no first length
+          ;  "@@ -9 +9,5 @@ line 4"
+          (let [retval3 (re-find #"^@@ \-(\d+) \+(\d+),(\d+) .*$" s)]
+            (if retval3 {:start-line1 (Integer/parseInt (nth retval3 1))
+                         :count1      0
+                         :start-line2 (Integer/parseInt (nth retval3 2))
+                         :count2      (Integer/parseInt (nth retval3 3))}
+                  ; else
+                  nil)))))))
 
-(defn process-commit
+
+(defn add-parsed-commit-changes
+  " add :changes to map
+    input: map
+    output: map"
   [commit]
   (println "hash: " (:hash commit))
   (let [changes (->> commit
@@ -80,8 +98,8 @@
                      (map parse-diff-line)
                      (remove nil?))]
     (-> commit
-        (assoc :changes changes)
-        (dissoc :lines))))
+        (assoc :changes changes))))
+        ;(dissoc :lines))))
 
 (defn- row->map
   " convert seq to map, with the given hashkey as key "
@@ -95,23 +113,40 @@
                      lm)]
     (apply merge newmaps)))
 
-(defn- count-change-sets [cs]
+(defn- add-count-change-sets [cs]
   (assoc cs :num-changes (count (:changes cs))))
 
+(defn add-commit-ops
+  [cs]
+  (println "add-commit-ops: " cs)
+  (assoc cs :change-ops (map (fn [x]
+                               (pd/diff>ops x))
+                          (:changes cs))))
 
-(defn- find-diffs [cs]
+(comment
+  ((juxt :start-line1 :count1 :start-line2 :count2) {:start-line1 0, :count1 0, :start-line2 1, :count2 5})
+  ,)
+
+
+(defn add-change-commit-info
+  [cs]
   (->> cs
-       (map process-commit)
-       (map count-change-sets)
-       (filter (fn [x] (< (:num-changes x) 80)))
-       list-hashes-to-map))
+       (map add-parsed-commit-changes)
+       (map add-count-change-sets)
+       (map add-commit-ops)))
+       ;(filter (fn [x] (< (:num-changes x) 80)))))
+       ;list-hashes-to-map))
     ;changesets))
     ;(->> (map merge cs changesets)
     ;     (map #(dissoc % :lines)))))
 
-(defn gen-commit-hash-to-all-diffs []
+(defn gen-commit-hash-to-all-diffs
+  " main entry point:
+  input: none (global var with filename)
+  output: list of maps "
+  []
   (let [lines (clojure.string/split-lines (slurp INFILE))
-        diffs (find-diffs (split-by-commits lines {} nil))]
+        diffs (add-change-commit-info (split-by-commits lines {} nil))]
     diffs))
 
 
@@ -119,8 +154,8 @@
   (parse-diff-line "xxx")
   (parse-diff-line "@@ -7,7 +7,7 @@ by Gene Kim")
 
-  (find-diffs (split-by-commits lines {} nil))
-  (find-diffs (split-by-commits (take 2500 lines) {} nil))
+  (add-change-commit-info (split-by-commits lines {} nil))
+  (add-change-commit-info (split-by-commits (take 2500 lines) {} nil))
 
   ; this is what gets called externally
   (gen-commit-hash-to-all-diffs))

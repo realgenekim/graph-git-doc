@@ -14,9 +14,15 @@
      ; starts at the same location, but second is longer
      ;  {:start-line1 5, :count1 2, :start-line2 5, :count2 4}
      (and (= start-line1 start-line2)
-          (> count2 count1))
+          (> count2 count1)
+          (not= count1 0))
      [[:modify start-line1 count1]
       [:add (+ start-line1 count1) (- count2 count1)]]
+     ; count1 is zero
+     (and (= start-line1 start-line2)
+       (> count2 count1)
+       (= count1 0))
+     [:add start-line2 (dec count2)]
      ; starts at the same location, but second is longer
      ;  {:start-line1 1, :count1 5, :start-line2 1, :count2 0}
      (and (= start-line1 start-line2)
@@ -31,10 +37,14 @@
   " input: {:start-line1 0, :count1 0, :start-line2 1, :count2 5}
     output: [[:add [1 2]]"
   [m]
+  {:pre [(map? m)]}
   (let [{:keys [start-line1 count1 start-line2 count2]} m
-        op (compute-op start-line1 count1 start-line2 count2)]))
+        op (compute-op start-line1 count1 start-line2 count2)]
+    op))
 
 
 (comment
   (compute-op 0 0 1 1)
+
+  (diff>ops nil)
   ,)

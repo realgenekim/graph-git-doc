@@ -10,7 +10,9 @@
                  [clj-jgit "0.8.10"]
                  [clojure.java-time "0.3.2"]
                  [archaeologist "0.1.1"]
-                 [defun "0.3.1"]]
+                 [defun "0.3.1"]
+                 [djblue/portal "0.14.0"]]
+
 
                  ;[planisphere "0.1.9"]]
   :test-paths ["test"]
