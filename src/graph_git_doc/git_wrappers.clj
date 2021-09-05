@@ -117,8 +117,8 @@
   (let [hash (:commit commit)
         text (get-manuscript-by-commit-hash! hash)]
         ;logs-with-lines (merge-in-manuscript-line-counts logs)]
-    {:num-lines (count-lines text)
-     :num-words (count-words text)}))
+    {:stats-num-lines (count-lines text)
+     :stats-num-words (count-words text)}))
 
 (comment
   (def commits (get-git-log!))
