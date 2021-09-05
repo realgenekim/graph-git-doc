@@ -56,6 +56,10 @@
 ;   add the word count and number of lines
 ;
 
+(def commits (->> commits
+                  (map gw/add-word-stats-to-git-commit!)
+                  (map gw/add-timestamp-to-git-commit!)))
+
 (comment
   (->> commits
        (map :hash))
