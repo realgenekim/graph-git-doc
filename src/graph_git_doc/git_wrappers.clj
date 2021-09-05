@@ -1,8 +1,10 @@
 (ns graph-git-doc.git-wrappers
-  (:require [clj-jgit.porcelain :as git]
-            [archaeologist.core :as a]
-            [archaeologist.git :as agit]
-            [archaeologist.fs :as fs]))
+  (:require
+    [archaeologist.core :as a]
+    [archaeologist.git :as agit]
+    [archaeologist.fs :as fs]
+    [clj-jgit.porcelain :as git]
+    [clojure.string :as s]))
 
 (defn foo
   "I don't do a whole lot."
@@ -57,7 +59,7 @@
   {:date   (.getWhen (:authorIdent l))
    :commit (:name l)})
 
-(defn get-log
+(defn get-git-log!
   " get list of commits in map form "
   []
   (let [repo (git/load-repo path)
@@ -67,18 +69,22 @@
          (map #(select-keys % [:name :authorIdent]))
          (map xform-log))))
 
-(defn get-manuscript-by-commit
+(comment
+  (get-git-log!)
+  ,)
+
+(defn get-manuscript-by-commit-hash!
   " for given commit, return string of entire file
     if file doesn't exist in commit, return nil "
   [commit]
   (let [fullpath (str path "/.git/")
-        mmd "manuscript-unicorn/manuscript.mmd"]
+        mmd "manuscript.md"]
     (a/with-repository [repo (agit/open-repository fullpath)]
       (try
         (->> (a/read-file repo commit mmd)
-             slurp
-             clojure.string/split-lines
-             count)
+             slurp)
+             ;clojure.string/split-lines)
+             ;count
         (catch Exception e
           nil)))))
 
@@ -86,17 +92,42 @@
   [logs]
   (let [line-counts (->> logs
                          (map :commit)
-                         (map #(get-manuscript-by-commit %))
+                         (map #(get-manuscript-by-commit-hash! %))
                          (map #(assoc {} :lines %)))]
     (map merge logs line-counts)))
 
-(defn get-commit-with-lines []
-  (let [logs (get-log)
-        logs-with-lines (merge-in-manuscript-line-counts logs)]
-    logs-with-lines))
+(defn count-lines
+  [text]
+  (->> text
+    clojure.string/split-lines
+    count))
+
+(defn count-words
+  [text]
+  (-> text
+      (s/split #"\s+")
+      count))
 
 (comment
-  (get-commit-with-lines))
+  (def text "ab   d e 123  dd\n 123")
+  (s/split text #"\s+"))
+
+(defn add-stats-to-git-commit!
+  [commit]
+  (let [hash (:commit commit)
+        text (get-manuscript-by-commit-hash! hash)]
+        ;logs-with-lines (merge-in-manuscript-line-counts logs)]
+    {:num-lines (count-lines text)
+     :num-words (count-words text)}))
+
+(comment
+  (def commits (get-git-log!))
+  (add-stats-to-git-commit! (second commits))
+  (->> commits
+       (map add-stats-to-git-commit!))
+
+
+  ,)
 
 
 
@@ -104,8 +135,8 @@
 
 
 
-#_(get-log)
-#_(count (get-log))
+#_(get-git-log!)
+#_(count (get-git-log!))
 
 
 ;(git/get-blob g "6ec864b68279d8bbb6c8c228239346cb2234ad1a" "./manuscript-unicorn/manuscript.mmd")
