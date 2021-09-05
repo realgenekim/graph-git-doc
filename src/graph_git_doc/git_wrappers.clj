@@ -1,4 +1,4 @@
-(ns graph-git-doc.repl-demo
+(ns graph-git-doc.git-wrappers
   (:require [clj-jgit.porcelain :as git]
             [archaeologist.core :as a]
             [archaeologist.git :as agit]
@@ -12,18 +12,13 @@
 ;(def path "/Users/genekim/book5")
 (def path "../test-git-repo")
 
-(comment)
+(comment
+  ;(def g (git/discover-repo path))
 
-(def g (git/discover-repo path))
-
-(def g (git/load-repo path))
-
-
-(git/git-status g)
-
-(git/git-branch-list g)
-
-(def log (git/git-log g))
+  (def g (git/load-repo path))
+  (git/git-status g)
+  (git/git-branch-list g)
+  (def log (git/git-log g)))
 
 
 
