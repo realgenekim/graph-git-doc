@@ -1,6 +1,7 @@
 (ns graph-git-doc.ops
   (:require
     [graph-git-doc.git-log-text :as glog]
+    [graph-git-doc.git-wrappers :as gw]
     [portal.api :as p]))
 
 (comment
@@ -58,6 +59,9 @@
 (comment
   (->> commits
        (map :hash))
+
+  (->> commits
+       (map gw/add-stats-to-git-commit!))
 
   ,)
 

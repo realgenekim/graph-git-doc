@@ -56,8 +56,8 @@
 (defn xform-log
   " turn jgit data structure to more clj-friendly data "
   [l]
-  {:date   (.getWhen (:authorIdent l))
-   :commit (:name l)})
+  {:date (.getWhen (:authorIdent l))
+   :hash (:name l)})
 
 (defn get-git-log!
   " get list of commits in map form "
@@ -83,30 +83,21 @@
       (try
         (->> (a/read-file repo commit mmd)
              slurp)
-             ;clojure.string/split-lines)
-             ;count
         (catch Exception e
           nil)))))
 
-(defn merge-in-manuscript-line-counts
-  [logs]
-  (let [line-counts (->> logs
-                         (map :commit)
-                         (map #(get-manuscript-by-commit-hash! %))
-                         (map #(assoc {} :lines %)))]
-    (map merge logs line-counts)))
 
 (defn count-lines
   [text]
-  (->> text
-    clojure.string/split-lines
-    count))
+  (some->> text
+       clojure.string/split-lines
+       count))
 
 (defn count-words
   [text]
-  (-> text
-      (s/split #"\s+")
-      count))
+  (some-> text
+          (s/split #"\s+")
+          count))
 
 (comment
   (def text "ab   d e 123  dd\n 123")
@@ -114,11 +105,13 @@
 
 (defn add-stats-to-git-commit!
   [commit]
-  (let [hash (:commit commit)
-        text (get-manuscript-by-commit-hash! hash)]
+  (let [hash (:hash commit)
+        text (get-manuscript-by-commit-hash! hash)
         ;logs-with-lines (merge-in-manuscript-line-counts logs)]
-    {:stats-num-lines (count-lines text)
-     :stats-num-words (count-words text)}))
+        stats {:stats-num-lines (count-lines text)
+               :stats-num-words (count-words text)}]
+    (merge commit stats)))
+
 
 (comment
   (def commits (get-git-log!))
