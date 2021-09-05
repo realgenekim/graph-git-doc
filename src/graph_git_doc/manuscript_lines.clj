@@ -58,7 +58,7 @@
 
 
 (comment
-  (graph-git-doc.utils/ns-clean)
+  (graph-git-doc.repl-utils/ns-clean)
 
   ;
   (count (get-commit-with-lines!))

@@ -1,4 +1,4 @@
-(ns graph-git-doc.demo
+(ns graph-git-doc.repl-demo
   (:require [clj-jgit.porcelain :as git]
             [archaeologist.core :as a]
             [archaeologist.git :as agit]
@@ -25,9 +25,13 @@
 
 (def log (git/git-log g))
 
-(:name (bean (first log)))
 
-(comment)
+
+(comment
+
+  (:name (bean (first log))))
+
+
   ;{:encoding       #object[sun.nio.cs.UTF_8 0x5a72d4e4 "UTF-8"],
   ; :parentCount    0,
   ; :footerLines    [],
@@ -114,27 +118,29 @@
 ;(with-repository [repo (git/open-repository "test/fixtures/git")]
 ;                 (list-files repo (get-default-version repo)))
 
-(def repo (agit/open-repository (str path "/.git/")))
+(comment
+  (def repo (agit/open-repository (str path "/.git/")))
 
-(def mmd "manuscript.md")
+  (def mmd "manuscript.md")
+  (def mmd "manuscript.md")
 
-(a/with-repository [repo (agit/open-repository (str path "/.git/"))]
-  (let [mmd "manuscript.md"]
-    (count (slurp (a/read-file repo "HEAD" mmd)))))
+  (a/with-repository [repo (agit/open-repository (str path "/.git/"))]
+    (let [mmd "manuscript.md"]
+      (count (slurp (a/read-file repo "HEAD" mmd)))))
 
 
-(a/list-files repo (a/get-default-version repo))
+  (a/list-files repo (a/get-default-version repo))
 
-(def mmd "manuscript-unicorn/manuscript.mmd")
+  ;(def mmd "manuscript-unicorn/manuscript.mmd")
 
-(def mmd-text (slurp (a/read-file repo "HEAD" mmd)))
-(def mmd-text (slurp (a/read-file repo "4f09c82e174d919e7dd42c913c6772d7a144af32" mmd)))
+  (def mmd-text (slurp (a/read-file repo "HEAD" mmd)))
+  (def mmd-text (slurp (a/read-file repo "4f09c82e174d919e7dd42c913c6772d7a144af32" mmd)))
 
-(def lines (clojure.string/split-lines mmd-text))
+  (def lines (clojure.string/split-lines mmd-text))
 
-(first lines)
-(count lines)
+  (first lines)
+  (count lines)
 
-(def mmd-text (slurp (a/read-file repo
-                                  "4f09c82e174d919e7dd42c913c6772d7a144af32"
-                                  mmd)))
+  (def mmd-text (slurp (a/read-file repo
+                                    "4f09c82e174d919e7dd42c913c6772d7a144af32"
+                                    mmd))))
