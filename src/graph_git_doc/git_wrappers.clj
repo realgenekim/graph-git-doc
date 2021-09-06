@@ -61,7 +61,7 @@
 
 (defn get-git-log!
   " get list of commits in map form "
-  []
+  [path]
   (let [repo (git/load-repo path)
         logs (git/git-log repo)]
     (->> logs
@@ -76,15 +76,19 @@
 (defn get-manuscript-by-commit-hash!
   " for given commit, return string of entire file
     if file doesn't exist in commit, return nil "
-  [commit]
-  (let [fullpath (str path "/.git/")
-        mmd "manuscript.md"]
+  [commit path mmd]
+  (let [fullpath (str path "/.git/")]
+        ;mmd "manuscript.md"]
     (a/with-repository [repo (agit/open-repository fullpath)]
       (try
         (->> (a/read-file repo commit mmd)
              slurp)
         (catch Exception e
           nil)))))
+
+(comment
+  (get-manuscript-by-commit-hash! "6a6f3bf648063ee87e11870a38ebb9c2d3ead64f" "../test-git-repo" "manuscript.md")
+  ,)
 
 
 (defn count-lines
@@ -104,15 +108,16 @@
   (s/split text #"\s+"))
 
 (defn add-word-stats-to-git-commit!
-  [commit]
+  [commit path mmd]
   (let [hash (:hash commit)
-        text (get-manuscript-by-commit-hash! hash)
+        text (get-manuscript-by-commit-hash! hash path mmd)
         ;logs-with-lines (merge-in-manuscript-line-counts logs)]
         stats {:stats-num-lines (count-lines text)
                :stats-num-words (count-words text)}]
     (merge commit stats)))
 
 (comment
+  (add-word-stats-to-git-commit! {:hash "6a6f3bf648063ee87e11870a38ebb9c2d3ead64f"} "../test-git-repo" "manuscript.md")
   (def commits (get-git-log!))
   (add-word-stats-to-git-commit! (second commits))
   (->> commits
@@ -123,9 +128,9 @@
 (defn add-timestamp-to-git-commit!
   "input: map
    output: map with merged new info"
-  [cs]
+  [cs path]
   (let [hash (:hash cs)
-        commits (get-git-log!)
+        commits (get-git-log! path)
         commit  (->> commits
                      (filter #(= (:hash %)
                                  hash))

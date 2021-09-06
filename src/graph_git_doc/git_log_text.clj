@@ -6,7 +6,8 @@
   output: parsed diffs
           {commithash {:start-line1 4, :count1 3, :start-line2 4, :count2 3}"
   (:require
-    [graph-git-doc.parse-diff :as pd]))
+    [graph-git-doc.parse-diff :as pd]
+    [clojure.string :as s]))
 
 (def INFILE "git-log.txt")
 
@@ -42,11 +43,27 @@
                  (conj (:lines current-set) l))
                hash-list)))))
 
+(defn run-git-command
+  [dirname filename outfile]
+  "(cd ../test-git-repo; git log --patch-with-stat --unified=1 manuscript.md) > git-log.txt"
+  (let [cmd (format "(cd %s; git log --patch-with-stat --unified=1 %s) > %s"
+              dirname filename outfile)
+        out (clojure.java.shell/sh "/bin/bash" "-c" cmd)]
+    (println out)))
+
+
+(comment
+  (run-git-command "../test-git-repo" "manuscript.md" "git-log.txt")
+  ,)
+
+
 (defn list-of-commits
   " input: none (global lines)
     output: list of commits "
-  []
-  (split-by-commits lines {} nil))
+  [infile]
+  (let [lines (-> (slurp infile)
+                  (s/split-lines))]
+    (split-by-commits lines {} nil)))
 
 
 

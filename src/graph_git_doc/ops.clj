@@ -43,7 +43,8 @@
 
 
 ;(def commits (glog/gen-commit-hash-to-all-diffs))
-(def commits (->> (glog/list-of-commits)
+(glog/run-git-command "../test-git-repo" "manuscript.md" "git-log.txt")
+(def commits (->> (glog/list-of-commits "git-log.txt")
                   (glog/add-change-commit-info)))
 
 (comment
@@ -57,12 +58,14 @@
 ;
 
 (def commits (->> commits
-                  (map gw/add-word-stats-to-git-commit!)
-                  (map gw/add-timestamp-to-git-commit!)))
+                  (map #(gw/add-word-stats-to-git-commit! % "../test-git-repo" "manuscript.md"))
+                  (map #(gw/add-timestamp-to-git-commit! % "../test-git-repo"))))
 
 (comment
   (->> commits
        (map :hash))
+
+  (tap> commits)
 
   (->> commits
        (map gw/add-word-stats-to-git-commit!)
