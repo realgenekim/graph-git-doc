@@ -226,7 +226,7 @@
         (for [l (range start (+ start len))]
           {:date   (:date change)
            :lines  l
-           :optype op1})))))
+           :optype (name op1)})))))
 
 (defn extract-strip-plot
   " input: one commit change set
@@ -254,39 +254,21 @@
 (comment
   (extract-strip-plot-data ops/commits))
 
-(defn gen-strip-plot [commits]
-  {:width    600
-   :data     {:name   "table",
-              :values (extract-strip-plot-data commits)}
-   :mark     {:type "tick"
-              :opacity 0.8}
-   :encoding {
-              :x {:field "date", :type "temporal"},
-              :y {:field "lines", :type "quantitative"
-                  :axis {:title "line num changed"}}}})
-
-(comment
-  (oz/start-plot-server!)
-  (gen-strip-plot ops/commits)
-  (oz/v! (gen-strip-plot ops/commits)))
-
-; get multiple series strip plot going
-
 (def multi-data
   {:width 600,
    :data {:name "table",
           :values (list
-                     {:date "2021-09-04T02:48:11.000-00:00", :lines 1 :optype "add"}
-                     {:date "2021-09-04T02:48:11.000-00:00", :lines 2 :optype "add"}
-                     {:date "2021-09-04T02:48:11.000-00:00", :lines 3 :optype "add"}
-                     {:date "2021-09-04T02:48:11.000-00:00", :lines 4 :optype "add"}
-                     {:date "2021-09-04T02:48:11.000-00:00", :lines 44 :optype "delete"}
-                     {:date "2021-09-04T23:08:37.000-00:00", :lines 4 :optype "add"}
-                     {:date "2021-09-04T23:08:37.000-00:00", :lines 5 :optype "add"}
-                     {:date "2021-09-04T23:08:37.000-00:00", :lines 6 :optype "add"}
-                     {:date "2021-09-04T23:08:37.000-00:00", :lines 30 :optype "delete"}
-                     {:date "2021-09-04T23:08:37.000-00:00", :lines 32 :optype "delete"},
-                     {:date "2021-09-04T23:08:37.000-00:00", :lines 342 :optype "delete"})},
+                    {:date "2021-09-04T02:48:11.000-00:00", :lines 1 :optype "add"}
+                    {:date "2021-09-04T02:48:11.000-00:00", :lines 2 :optype "add"}
+                    {:date "2021-09-04T02:48:11.000-00:00", :lines 3 :optype "add"}
+                    {:date "2021-09-04T02:48:11.000-00:00", :lines 4 :optype "add"}
+                    {:date "2021-09-04T02:48:11.000-00:00", :lines 44 :optype "delete"}
+                    {:date "2021-09-04T23:08:37.000-00:00", :lines 4 :optype "add"}
+                    {:date "2021-09-04T23:08:37.000-00:00", :lines 5 :optype "add"}
+                    {:date "2021-09-04T23:08:37.000-00:00", :lines 6 :optype "add"}
+                    {:date "2021-09-04T23:08:37.000-00:00", :lines 30 :optype "delete"}
+                    {:date "2021-09-04T23:08:37.000-00:00", :lines 32 :optype "delete"},
+                    {:date "2021-09-04T23:08:37.000-00:00", :lines 342 :optype "delete"})},
    :mark {:type "point", :opacity 0.8},
    :encoding {:x {:field "date", :type "temporal"
                   :timeUnit "monthdate"},
@@ -301,6 +283,36 @@
    :params [{:name "brush"
              :select {:type "interval"
                       :encodings ["x"]}}]})
+
+(defn gen-strip-plot [commits]
+  {:width    600
+   :data     {:name   "table",
+              :values (extract-strip-plot-data commits)}
+   :mark     {:type "point"
+              :opacity 0.8}
+   :encoding {:x {:field "date", :type "temporal"
+                  :timeUnit "minutes"},
+              :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}
+              :color {:condition {:param "brush"
+                                  :title "ops"
+                                  :field "optype"
+                                  :type "nominal"
+                                  :scale {:domain ["add" "delete" "modify"]
+                                          :range  ["green" "red" "pink"]}}
+                      :value "red"}}
+   :params [{:name "brush"
+             :select {:type "interval"
+                      :encodings ["x"]}}]})
+
+(comment
+  (oz/start-plot-server!)
+  (gen-strip-plot ops/commits)
+  (tap> (gen-strip-plot ops/commits))
+  (oz/v! (gen-strip-plot ops/commits)))
+
+; get multiple series strip plot going
+
+
 
 (comment
   (oz/start-plot-server!)
