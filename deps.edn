@@ -1,6 +1,7 @@
 {:paths ["src" "resources"]
  :deps  {org.clojure/clojure  {:mvn/version "1.10.1-beta1"},
-         metasoarous/oz       {:mvn/version "1.6.0-alpha34"},
+         ;metasoarous/oz       {:mvn/version "1.6.0-alpha34"},
+         metasoarous/oz       {:local/root "../oz"},
          org.clojure/data.csv {:mvn/version "0.1.4"},
          clj-jgit             {:mvn/version "0.8.10"},
          clojure.java-time    {:mvn/version "0.3.2"},

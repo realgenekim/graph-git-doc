@@ -277,35 +277,20 @@
    :mark {:type "point", :opacity 0.8},
    :encoding {:x {:field "date", :type "temporal"
                   :timeUnit "monthdate"},
-              :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}}
-              ;:color {:condition {:param "brush"
-              ;                    :title "ops"
-              ;                    :field "optype"}}
-              ;                    :type "nominal"
-              ;                    :scale {:domain ["add" "delete"]
-              ;                            :range  ["blue" "red"]}}
-              ;        :value "red"}}
+              :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}
+              :color {:condition {:param "brush"
+                                  :title "ops"
+                                  :field "optype"
+                                  :type "nominal"
+                                  :scale {:domain ["add" "delete"]
+                                          :range  ["blue" "red"]}}
+                      :value "red"}}
    :params [{"name" "brush"
              "select" {"type" "interval"
                        "encodings" ["x"]}}]})
-   ; "params": [{
-;        "name": "brush",
-;        "select": {"type": "interval", "encodings": ["x"]}
-;      }],})
-            ;"color": {
-            ;          "condition": {
-            ;                        "param": "brush",
-            ;                               "title": "Weather",
-            ;                        "field": "weather",
-            ;                               "type": "nominal",
-            ;                        "scale": {
-            ;                                  "domain": ["sun", "fog", "drizzle", "rain", "snow"],
-            ;                                          "range": ["#e7ba52", "#a7a7a7", "#aec7e8", "#1f77b4", "#9467bd"]
-            ;                                  }
-            ;                        },}})
-
 
 (comment
+  (oz/start-plot-server!)
   (oz/v! multi-data)
   (println (json/write-str multi-data))
   ,)
