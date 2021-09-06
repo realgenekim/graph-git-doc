@@ -147,7 +147,7 @@
     nil
     (do
       (println "change-op: change-op: " change-op)
-      (let [[op1 start len] change-op]
+      (let [[op1 start len] (first change-op)]
         (for [l (range start (+ start len))]
           {:date   (:date change)
            :lines  l
@@ -166,7 +166,7 @@
     output: {:date XXX :lines }"
   [change]
   ;(println "extract-strip-plot: change: " change)
-  (let [change-ops     (first (:change-ops change))
+  (let [change-ops     (:change-ops change)
         numlines       (:stats-num-lines change)
         _              (println "extract-strip-lots: change-ops: " change-ops)
         out            (some->> change-ops
@@ -181,9 +181,9 @@
         filler-entries (map #(filler-op change %) filler)
         out2           (conj out filler-entries)]
         ;_              (println "extract-strip-plot: out2: " out2)]
-    out2
+    (flatten  out2)))
     ; no filler?
-    out))
+    ;(flatten out)))
 
 (comment
   (set (range 1 10))
@@ -191,6 +191,14 @@
 
 (comment
   (extract-strip-plot (first ops/commits))
+  (-> ops/commits
+      (nth 1)
+      (select-keys [:date :change-ops]))
+
+  (extract-strip-plot (second ops/commits))
+  (extract-strip-plot (nth ops/commits 2))
+  (extract-strip-plot (nth ops/commits 3))
+  (extract-strip-plot (nth ops/commits 4))
   (map :change-ops ops/commits)
   (map extract-strip-plot ops/commits))
 
@@ -243,6 +251,7 @@
    :mark     {:type "point" :shape "square" :filled true}
    :encoding {:x {:field "date", :type "temporal"}
                   ;:timeUnit "minutes"},
+                  ;:timeUnit "yearmonthdate"},
               :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}
               :color {:condition {:param "brush"
                                   :title "ops"
@@ -258,8 +267,20 @@
 (comment
   (oz/start-plot-server!)
   (gen-strip-plot ops/commits)
+  (gen-strip-plot (->> ops/commits
+                       (drop-last 1)))
+  (map :changes ops/commits)
+  (map :change-ops ops/commits)
   (tap> (gen-strip-plot ops/commits))
-  (oz/v! (gen-strip-plot ops/commits)))
+  (oz/v! (gen-strip-plot ops/commits))
+  (oz/v! (gen-strip-plot (->> ops/commits
+                           (drop-last 1))))
+
+  (->> ops/commits
+    (map #(select-keys % [:date :change-ops])))
+  (tap> *1)
+
+  ,)
 
 ; get multiple series strip plot going
 
