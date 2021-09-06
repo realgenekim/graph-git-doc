@@ -254,8 +254,59 @@
                   :axis {:title "line num changed"}}}})
 
 (comment
+  (oz/start-plot-server!)
   (gen-strip-plot ops/commits)
-  (oz/v! (gen-strip-plot ops/commits))
+  (oz/v! (gen-strip-plot ops/commits)))
+
+; get multiple series strip plot going
+
+(def multi-data
+  {:width 600,
+   :data {:name "table",
+          :values (list
+                     {:date "2021-09-04T02:48:11.000-00:00", :lines 1 :optype "add"}
+                     {:date "2021-09-04T02:48:11.000-00:00", :lines 2 :optype "add"}
+                     {:date "2021-09-04T02:48:11.000-00:00", :lines 3 :optype "add"}
+                     {:date "2021-09-04T02:48:11.000-00:00", :lines 4 :optype "add"}
+                     {:date "2021-09-04T02:48:11.000-00:00", :lines 44 :optype "delete"}
+                     {:date "2021-09-04T23:08:37.000-00:00", :lines 4 :optype "add"}
+                     {:date "2021-09-04T23:08:37.000-00:00", :lines 5 :optype "add"}
+                     {:date "2021-09-04T23:08:37.000-00:00", :lines 6 :optype "add"}
+                     {:date "2021-09-04T23:08:37.000-00:00", :lines 30 :optype "delete"}
+                     {:date "2021-09-04T23:08:37.000-00:00", :lines 32 :optype "delete"})},
+   :mark {:type "point", :opacity 0.8},
+   :encoding {:x {:field "date", :type "temporal"},
+              :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}
+              :color {:condition {:param "brush"
+                                  :title "ops"
+                                  :field "optype"
+                                  :type "nominal"
+                                  :scale {:domain ["add" "delete"]
+                                          :range  ["blue" "red"]}}
+                      :value "red"}}
+   :params [{"name" "brush"
+             "select" {"type" "interval"
+                       "encodings" ["x"]}}]})
+   ; "params": [{
+;        "name": "brush",
+;        "select": {"type": "interval", "encodings": ["x"]}
+;      }],})
+            ;"color": {
+            ;          "condition": {
+            ;                        "param": "brush",
+            ;                               "title": "Weather",
+            ;                        "field": "weather",
+            ;                               "type": "nominal",
+            ;                        "scale": {
+            ;                                  "domain": ["sun", "fog", "drizzle", "rain", "snow"],
+            ;                                          "range": ["#e7ba52", "#a7a7a7", "#aec7e8", "#1f77b4", "#9467bd"]
+            ;                                  }
+            ;                        },}})
+
+
+(comment
+  (oz/v! multi-data)
+  (println (json/write-str multi-data))
   ,)
 
 (def hash-to-changes (log/gen-commit-hash-to-all-diffs))

@@ -5,7 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.1-beta1"]
                  ;[metasoarous/oz "1.5.7-SNAPSHOT"]
-                 [metasoarous/oz "1.5.6"]
+                 [metasoarous/oz "1.6.0-alpha34"]
                  [org.clojure/data.csv "0.1.4"]
                  [clj-jgit "0.8.10"]
                  [clojure.java-time "0.3.2"]
