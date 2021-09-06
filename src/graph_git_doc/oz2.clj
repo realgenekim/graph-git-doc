@@ -228,15 +228,39 @@
            :lines  l
            :optype (name op1)})))))
 
+(defn filler-op
+  " input: n
+    output: {:date :lines :optype} "
+  [change n]
+  {:date (:date change)
+   :lines n
+   :optype "none"})
+
 (defn extract-strip-plot
   " input: one commit change set
     output: {:date XXX :lines }"
   [change]
   ;(println "extract-strip-plot: change: " change)
-  (let [change-ops (first (:change-ops change))]
-    (println "extract-strip-lots: change-ops: " change-ops)
-    (some->> change-ops
-             (map #(change-op change %)))))
+  (let [change-ops     (first (:change-ops change))
+        numlines       (:stats-num-lines change)
+        _              (println "extract-strip-lots: change-ops: " change-ops)
+        out            (some->> change-ops
+                         (map #(change-op change %)))
+        ;_          (println "extract-strip-plot: out: " out)
+        ;_          (println "extract-strip-plot: numlines: " numlines)]
+        filler         (if out
+                         (clojure.set/difference
+                           (set (range 0 numlines))
+                           (set (map :lines out))))
+        _              (println "extract-strip-plot: filler: " filler)
+        filler-entries (map #(filler-op change %) filler)
+        out2           (conj out filler-entries)
+        _              (println "extract-strip-plot: out2: " out2)]
+    out2))
+
+(comment
+  (set (range 1 10))
+  ,)
 
 (comment
   (extract-strip-plot (first ops/commits))
@@ -288,8 +312,7 @@
   {:width    600
    :data     {:name   "table",
               :values (extract-strip-plot-data commits)}
-   :mark     {:type "point"
-              :opacity 0.8}
+   :mark     {:type "point" :shape "square" :filled true}
    :encoding {:x {:field "date", :type "temporal"
                   :timeUnit "minutes"},
               :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}
@@ -297,8 +320,8 @@
                                   :title "ops"
                                   :field "optype"
                                   :type "nominal"
-                                  :scale {:domain ["add" "delete" "modify"]
-                                          :range  ["green" "red" "pink"]}}
+                                  :scale {:domain ["add" "delete" "modify" "none"]
+                                          :range  ["green" "red" "pink" "lightblue"]}}
                       :value "red"}}
    :params [{:name "brush"
              :select {:type "interval"
