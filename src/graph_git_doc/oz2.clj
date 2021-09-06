@@ -275,14 +275,15 @@
                      {:date "2021-09-04T23:08:37.000-00:00", :lines 30 :optype "delete"}
                      {:date "2021-09-04T23:08:37.000-00:00", :lines 32 :optype "delete"})},
    :mark {:type "point", :opacity 0.8},
-   :encoding {:x {:field "date", :type "temporal"},
+   :encoding {:x {:field "date", :type "temporal"
+                  :timeUnit "monthdate"},
               :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}}
-              ;:color {"condition" {:param "brush"
-              ;                     :title "ops"
-              ;                     :field "optype"
-              ;                     :type "nominal"
-              ;                     :scale {:domain ["add" "delete"]
-              ;                             :range  ["blue" "red"]}}
+              ;:color {:condition {:param "brush"
+              ;                    :title "ops"
+              ;                    :field "optype"}}
+              ;                    :type "nominal"
+              ;                    :scale {:domain ["add" "delete"]
+              ;                            :range  ["blue" "red"]}}
               ;        :value "red"}}
    :params [{"name" "brush"
              "select" {"type" "interval"
