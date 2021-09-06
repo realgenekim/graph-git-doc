@@ -105,23 +105,8 @@
   ,)
 
 ;
+; strip plots
 ;
-;
-
-(comment
-  (oz/start-plot-server!)
-  (oz/v!)
-  (oz/v! (graph-word-count))
-
-  (def commits graph-git-doc.manuscript-lines/get-commit-with-lines!)
-  (oz/v! (gen-graph-canned commits)))
-
-
-#_ (oz/v! (gen-graph commits))
-#_ (oz/v! (gen-graph-canned commits))
-#_ (oz/start-plot-server!)
-
-;;;;;  strip-plot of changes
 
 ; strip plot: https://vega.github.io/vega-lite/examples/tick_strip.html
 
@@ -142,7 +127,6 @@
               :y {:field "lines", :type "quantitative"}}})
 
 
-
 (comment
   (oz/v! (gen-strip-plot-canned)))
 
@@ -150,68 +134,9 @@
   {:date  (.format (java.text.SimpleDateFormat. "MM/dd/yy")
                    (:date c))})
 
-
-
-;(def x1 (first commits-with-changes))
-
-(defn ranges [c]
-  (let [[starts counts]  [(map :start-line2 (:changes c))
-                          (map :count2 (:changes c))]
-        ; (starts, ends) ...
-        rs (map list starts counts)]
-    (flatten (for [[s c] rs]
-               (range s (+ s c 1))))))
-
-
-
-(defn extract-change-range [c]
-  (let [lines  (ranges c)
-        l      (:lines c)
-        l2     (if l
-                 (conj lines l)
-                 lines)
-        datemap (gen-date c)]
-    (map (fn [x]
-           (let [inverted-line (- l x)
-                 inverted-line (if (neg? inverted-line)
-                                 0
-                                 inverted-line)]
-             (assoc datemap :lines inverted-line)))
-         l2)))
-
-
-
-(defn extract-change-ranges [commits]
-  (->> commits
-       (map extract-change-range)
-       flatten))
-       ;(map (fn [x] (invert-line-num commits x)))))
-
-
-#_ (extract-change-range x1)
-
-; [{:date "09/08/18", :lines 3291}
-;                       {:date "03/07/18", :lines 3278}
-;                       {:date "07/18/18", :lines 3303}
-;                       {:date "07/17/18", :lines 3306}
-
-(defn gen-strip-plot [commits-with-changes]
-  {:width    600
-   :data     {:name   "table",
-              :values (extract-change-ranges commits-with-changes)}
-   :mark     {:type "tick"
-              :opacity 0.8}
-   :encoding {
-              :x {:field "date", :type "temporal"},
-              :y {:field "lines", :type "quantitative"
-                  :axis {:title "line num changed"}}}})
-
-(defn extract-add
-  [cs]
-  (->> cs
-       (filter #(= :add
-                   (first %)))
-       first))
+;
+; use strip plot to approximate historyflow graphs
+;
 
 (defn change-op
   " input: change-set and change-op (:add, :modify, :delete)
@@ -313,8 +238,8 @@
    :data     {:name   "table",
               :values (extract-strip-plot-data commits)}
    :mark     {:type "point" :shape "square" :filled true}
-   :encoding {:x {:field "date", :type "temporal"
-                  :timeUnit "minutes"},
+   :encoding {:x {:field "date", :type "temporal"}
+                  ;:timeUnit "minutes"},
               :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}
               :color {:condition {:param "brush"
                                   :title "ops"
@@ -343,40 +268,6 @@
   (println (json/write-str multi-data))
   ,)
 
-(def hash-to-changes (log/gen-commit-hash-to-all-diffs))
-
-
-#_(:commit (first commits))
-#_(get hash-to-changes (:commit (first commits)))
-
-(defn merge-hash-changes [c]
-  (assoc c :changes
-           (:changes (get hash-to-changes (:commit c)))))
-
-
-
-(defn get-merged-changes! []
-  (let [commits (graph-git-doc.manuscript-lines/get-commit-with-lines!)]
-    (map merge-hash-changes commits)))
-
-(defn graph-strip-plot []
-  (let [commits-with-changes (get-merged-changes!)]
-    (gen-strip-plot commits-with-changes)))
-
-(comment
-  (def commits graph-git-doc.manuscript-lines/get-commit-with-lines!))
-
-#_ (def commits-with-changes (get-merged-changes!))
-
-
-#_ (first commits-with-changes)
-#_ (extract-change-ranges commits-with-changes)
-#_ (extract-change-range (first commits-with-changes))
-
-; works!
-
-
-#_ (oz/v! (graph-strip-plot))
 
 
 
@@ -387,11 +278,13 @@
 
 (defn composite-graph []
   {:layer [
-           (graph-strip-plot)
-           (graph-wc-line-plot)]
+           (gen-strip-plot ops/commits)
+           (graph-wc-line-plot ops/commits)]
    :resolve {:scale {:y "independent"}}})
 
 
-;(oz/v! (composite-graph))
+(comment
+  (oz/v! (composite-graph)))
+
 
 
