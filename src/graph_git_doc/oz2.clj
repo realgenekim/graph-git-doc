@@ -233,28 +233,13 @@
     output: {:date XXX :lines }"
   [change]
   ;(println "extract-strip-plot: change: " change)
-  (let [change-ops (:change-ops change)]
+  (let [change-ops (first (:change-ops change))]
     (println "extract-strip-lots: change-ops: " change-ops)
     (some->> change-ops
              (map #(change-op change %)))))
 
 (comment
   (extract-strip-plot (first ops/commits))
-  (map :change-ops ops/commits)
-  ; (([:add 1 5])
-  ; ([[:modify 2 2] [:add 4 4]])
-  ; ([:add 9 4])
-  ; ([:add 13 4])
-  ; ([:delete 12 4])
-  ; ([:delete 6 3])
-  ; ([:delete 5 4])
-  ; ([:delete 1 4])
-  ; ([:delete 1 2])
-  ; ([:add 1 6])
-  ; ([:modify 3 4])
-  ; ([[:modify 5 2] [:add 7 2]])
-  ; ([[:modify 1 4] [:add 5 2]])
-  ; ())
   (map extract-strip-plot ops/commits))
 
 (defn extract-strip-plot-data
