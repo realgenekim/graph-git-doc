@@ -43,17 +43,18 @@
                  (conj (:lines current-set) l))
                hash-list)))))
 
-(defn run-git-command
+(defn run-git-command!
   [dirname filename outfile]
   "(cd ../test-git-repo; git log --patch-with-stat --unified=1 manuscript.md) > git-log.txt"
   (let [cmd (format "(cd %s; git log --patch-with-stat --unified=1 %s) > %s"
               dirname filename outfile)
+        _ (println "run-git-command! cmd: " cmd)
         out (clojure.java.shell/sh "/bin/bash" "-c" cmd)]
     (println out)))
 
 
 (comment
-  (run-git-command "../test-git-repo" "manuscript.md" "git-log.txt")
+  (run-git-command! "../test-git-repo" "manuscript.md" "git-log.txt")
   ,)
 
 
@@ -66,15 +67,23 @@
     (split-by-commits lines {} nil)))
 
 
+(comment
+  (split-by-commits ["commit 123"
+                     "abc"
+                     "def"
+                     "commit abc"
+                     "hij"
+                     "klm"] {} nil)
 
-#_ (split-by-commits ["commit 123"
-                      "abc"
-                      "def"
-                      "commit abc"
-                      "hij"
-                      "klm"] {} nil)
+  (def x (split-by-commits (take 500 lines) {} nil))
 
-#_ (def x (split-by-commits (take 500 lines) {} nil))
+  (def lines (s/split-lines (slurp "git-log-unicorn.txt")))
+  (count lines)
+  (->> lines
+       (filter commit-line?)
+       count)
+
+  ,)
 
 (defn parse-diff-line [s]
   " @@ -startline1,count1 +startline2,count2 @@

@@ -34,6 +34,10 @@
      (and (= start-line1 start-line2)
           (> count1 count2))
      [[:delete start-line1 (- count1 count2)]]
+     ; else it's some sort of modify
+     ; {:start-line1 3070, :count1 3, :start-line2 3077, :count2 4
+     (and (> count2 count1))
+     [[:add start-line2 (- count2 count1)]]
 
      :else nil)))
 

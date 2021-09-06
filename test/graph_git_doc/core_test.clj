@@ -57,6 +57,10 @@
     (is (= [[:delete 12 4]]
           (apply pd/compute-op (vals {:start-line1 12, :count1 6, :start-line2 12, :count2 2}))))
 
+    (is (= [[:add 3077 1]]
+          (apply pd/compute-op (vals {:start-line1 3070, :count1 3, :start-line2 3077, :count2 4}))))
+
+
 
     ,)
   ,)

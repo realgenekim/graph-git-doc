@@ -181,7 +181,7 @@
         filler-entries (map #(filler-op change %) filler)
         out2           (conj out filler-entries)
         _              (println "extract-strip-plot: out2: " out2)]
-    out2))
+    out))
 
 (comment
   (set (range 1 10))

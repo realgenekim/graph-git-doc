@@ -44,7 +44,7 @@
 
 ;(def commits (glog/gen-commit-hash-to-all-diffs))
 (comment
-  (glog/run-git-command "../test-git-repo" "manuscript.md" "git-log.txt")
+  (glog/run-git-command! "../test-git-repo" "manuscript.md" "git-log.txt")
   (def commits (->> (glog/list-of-commits "git-log.txt")
                     (glog/add-change-commit-info))))
 
@@ -65,11 +65,14 @@
 
 (defn create-commits!
   []
-  (let [repo-dir "../test-git-repo"
+  (let [
+        repo-dir "../test-git-repo"
+        repo-dir "/Users/genekim/book5"
         manuscript "manuscript.md"
+        manuscript "manuscript-unicorn/manuscript.mmd"
         outfile "git-log.txt"
 
-        out (glog/run-git-command repo-dir manuscript outfile)
+        out (glog/run-git-command! repo-dir manuscript outfile)
 
         commit1 (->> (glog/list-of-commits outfile)
                      (glog/add-change-commit-info))
