@@ -249,7 +249,7 @@
    :data     {:name   "table",
               :values (extract-strip-plot-data commits)}
    :mark     {:type "point" :shape "square" :filled true}
-   :encoding {:x {:field "date", :type "temporal"}
+   :encoding {:x {:field "date", :type "ordinal"}
                   ;:timeUnit "minutes"},
                   ;:timeUnit "yearmonthdate"},
               :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}
@@ -274,7 +274,7 @@
   (tap> (gen-strip-plot ops/commits))
   (oz/v! (gen-strip-plot ops/commits))
   (oz/v! (gen-strip-plot (->> ops/commits
-                           (drop-last 1))))
+                           (take 10))))
 
   (->> ops/commits
     (map #(select-keys % [:date :change-ops])))
