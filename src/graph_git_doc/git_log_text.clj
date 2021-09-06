@@ -144,7 +144,7 @@
 
 (defn add-commit-ops
   [cs]
-  (println "add-commit-ops: " cs)
+  ;(println "add-commit-ops: " cs)
   (assoc cs :change-ops (map (fn [x]
                                (pd/diff>ops x))
                           (:changes cs))))

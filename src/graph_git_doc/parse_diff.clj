@@ -38,6 +38,10 @@
      ; {:start-line1 3070, :count1 3, :start-line2 3077, :count2 4
      (and (> count2 count1))
      [[:add start-line2 (- count2 count1)]]
+     ; modify
+     ; {:start-line1 102, :count1 5, :start-line2 85, :count2 5}
+     true
+     [[:modify start-line2 count2]]
 
      :else nil)))
 

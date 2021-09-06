@@ -177,10 +177,12 @@
                          (clojure.set/difference
                            (set (range 0 numlines))
                            (set (map :lines out))))
-        _              (println "extract-strip-plot: filler: " filler)
+        ;_              (println "extract-strip-plot: filler: " filler)
         filler-entries (map #(filler-op change %) filler)
-        out2           (conj out filler-entries)
-        _              (println "extract-strip-plot: out2: " out2)]
+        out2           (conj out filler-entries)]
+        ;_              (println "extract-strip-plot: out2: " out2)]
+    out2
+    ; no filler?
     out))
 
 (comment
@@ -189,6 +191,7 @@
 
 (comment
   (extract-strip-plot (first ops/commits))
+  (map :change-ops ops/commits)
   (map extract-strip-plot ops/commits))
 
 (defn extract-strip-plot-data
