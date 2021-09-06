@@ -213,21 +213,48 @@
                    (first %)))
        first))
 
+(defn change-op
+  " input: change-set and change-op (:add, :modify, :delete)
+    output: [{:date :lines :optype}]
+      emit all the dots between start and start+len "
+  [change change-op]
+  (if-not change-op
+    nil
+    (do
+      (println "change-op: change-op: " change-op)
+      (let [[op1 start len] change-op]
+        (for [l (range start (+ start len))]
+          {:date   (:date change)
+           :lines  l
+           :optype op1})))))
+
 (defn extract-strip-plot
   " input: one commit change set
     output: {:date XXX :lines }"
   [change]
   ;(println "extract-strip-plot: change: " change)
-  (let [change-ops (:change-ops change)
-        op         (extract-add change-ops)]
-    (if op
-      (let [[op1 start len]  op]
-        (for [l (range start (+ start len))]
-          {:date  (:date change)
-           :lines l})))))
+  (let [change-ops (:change-ops change)]
+    (println "extract-strip-lots: change-ops: " change-ops)
+    (some->> change-ops
+             (map #(change-op change %)))))
 
 (comment
   (extract-strip-plot (first ops/commits))
+  (map :change-ops ops/commits)
+  ; (([:add 1 5])
+  ; ([[:modify 2 2] [:add 4 4]])
+  ; ([:add 9 4])
+  ; ([:add 13 4])
+  ; ([:delete 12 4])
+  ; ([:delete 6 3])
+  ; ([:delete 5 4])
+  ; ([:delete 1 4])
+  ; ([:delete 1 2])
+  ; ([:add 1 6])
+  ; ([:modify 3 4])
+  ; ([[:modify 5 2] [:add 7 2]])
+  ; ([[:modify 1 4] [:add 5 2]])
+  ; ())
   (map extract-strip-plot ops/commits))
 
 (defn extract-strip-plot-data
@@ -273,7 +300,8 @@
                      {:date "2021-09-04T23:08:37.000-00:00", :lines 5 :optype "add"}
                      {:date "2021-09-04T23:08:37.000-00:00", :lines 6 :optype "add"}
                      {:date "2021-09-04T23:08:37.000-00:00", :lines 30 :optype "delete"}
-                     {:date "2021-09-04T23:08:37.000-00:00", :lines 32 :optype "delete"})},
+                     {:date "2021-09-04T23:08:37.000-00:00", :lines 32 :optype "delete"},
+                     {:date "2021-09-04T23:08:37.000-00:00", :lines 342 :optype "delete"})},
    :mark {:type "point", :opacity 0.8},
    :encoding {:x {:field "date", :type "temporal"
                   :timeUnit "monthdate"},
@@ -285,9 +313,9 @@
                                   :scale {:domain ["add" "delete"]
                                           :range  ["blue" "red"]}}
                       :value "red"}}
-   :params [{"name" "brush"
-             "select" {"type" "interval"
-                       "encodings" ["x"]}}]})
+   :params [{:name "brush"
+             :select {:type "interval"
+                      :encodings ["x"]}}]})
 
 (comment
   (oz/start-plot-server!)
