@@ -146,8 +146,8 @@
   (if-not change-op
     nil
     (do
-      (println "change-op: change-op: " change-op)
-      (let [[op1 start len] (first change-op)]
+      (println "  change-op: change-op: " change-op)
+      (let [[op1 start len] change-op]
         (for [l (range start (+ start len))]
           {:date   (:date change)
            :lines  l
@@ -165,23 +165,27 @@
   " input: one commit change set
     output: {:date XXX :lines }"
   [change]
-  ;(println "extract-strip-plot: change: " change)
-  (let [change-ops     (:change-ops change)
-        numlines       (:stats-num-lines change)
-        _              (println "extract-strip-lots: change-ops: " change-ops)
-        out            (some->> change-ops
-                         (map #(change-op change %)))
-        ;_          (println "extract-strip-plot: out: " out)
-        ;_          (println "extract-strip-plot: numlines: " numlines)]
-        filler         (if out
-                         (clojure.set/difference
-                           (set (range 0 numlines))
-                           (set (map :lines out))))
-        ;_              (println "extract-strip-plot: filler: " filler)
-        filler-entries (map #(filler-op change %) filler)
-        out2           (conj out filler-entries)]
-        ;_              (println "extract-strip-plot: out2: " out2)]
-    (flatten  out2)))
+  (println "extract-strip-plot: change: " change)
+  (if-not (seq (:change-ops change))
+    nil
+    (let [change-ops     (:change-ops change)
+          numlines       (:stats-num-lines change)
+          _              (println "extract-strip-plot: change-ops: " change-ops)
+          out            (for [c change-ops]
+                           (change-op change c))
+                         ;(some->> change-ops
+                         ;  (map #(change-op change %)))
+          _          (println "extract-strip-plot: out: " out)
+          ;_          (println "extract-strip-plot: numlines: " numlines)]
+          filler         (if out
+                           (clojure.set/difference
+                             (set (range 0 numlines))
+                             (set (map :lines out))))
+          ;_              (println "extract-strip-plot: filler: " filler)
+          filler-entries (map #(filler-op change %) filler)
+          out2           (conj out filler-entries)]
+          ;_              (println "extract-strip-plot: out2: " out2)]
+      (flatten  out2))))
     ; no filler?
     ;(flatten out)))
 
@@ -250,6 +254,7 @@
               :values (extract-strip-plot-data commits)}
    :mark     {:type "point" :shape "square" :filled true}
    :encoding {:x {:field "date", :type "ordinal"}
+                  ; https://vega.github.io/vega-lite/docs/timeunit.html
                   ;:timeUnit "minutes"},
                   ;:timeUnit "yearmonthdate"},
               :y {:field "lines", :type "quantitative", :axis {:title "line num changed"}}
@@ -258,8 +263,8 @@
                                   :field "optype"
                                   :type "nominal"
                                   :scale {:domain ["add" "delete" "modify" "none"]
-                                          :range  ["green" "red" "pink" "lightblue"]}}
-                      :value "red"}}
+                                          :range  ["green" "red" "orange" "lightgray"]}}
+                      :value "lightgray"}}
    :params [{:name "brush"
              :select {:type "interval"
                       :encodings ["x"]}}]})
@@ -268,13 +273,31 @@
   (oz/start-plot-server!)
   (gen-strip-plot ops/commits)
   (gen-strip-plot (->> ops/commits
+                    (take 5)))
+  (gen-strip-plot (->> ops/commits
                        (drop-last 1)))
   (map :changes ops/commits)
   (map :change-ops ops/commits)
+  (map :change-ops ops/commits-sample)
+  (->> ops/commits
+       (take 4)
+       gen-strip-plot
+       oz/v!)
+  (->> ops/commits
+       (take 4)
+       (map :change-ops))
+       ;gen-strip-plot)
+       ;oz/v!)
   (tap> (gen-strip-plot ops/commits))
+  (oz/v! (gen-strip-plot ops/commits-sample))
   (oz/v! (gen-strip-plot ops/commits))
   (oz/v! (gen-strip-plot (->> ops/commits
-                           (take 10))))
+                           (drop-last 1))))
+  (oz/v! (gen-strip-plot (->> ops/commits
+                           (take 5))))
+  (oz/v! (gen-strip-plot (->> ops/commits
+                           (take 20))))
+  (oz/v! (gen-strip-plot (->> ops/commits)))
 
   (->> ops/commits
     (map #(select-keys % [:date :change-ops])))

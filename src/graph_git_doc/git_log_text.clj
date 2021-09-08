@@ -145,9 +145,12 @@
 (defn add-commit-ops
   [cs]
   ;(println "add-commit-ops: " cs)
-  (assoc cs :change-ops (map (fn [x]
-                               (pd/diff>ops x))
-                          (:changes cs))))
+  (let [input (:changes cs)
+        output (->> input
+                    (map #(apply pd/compute-op (vals %)))
+                    ; get rid of one level of lists
+                    (mapcat identity))]
+    (assoc cs :change-ops output)))
 
 (comment
   ((juxt :start-line1 :count1 :start-line2 :count2) {:start-line1 0, :count1 0, :start-line2 1, :count2 5})

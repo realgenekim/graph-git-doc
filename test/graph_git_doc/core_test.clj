@@ -75,6 +75,68 @@
     ,)
   ,)
 
+(deftest multiple
+  (let [input [{:start-line1 9, :count1 3, :start-line2 9, :count2 3}
+               {:start-line1 44, :count1 31, :start-line2 44, :count2 11}
+               {:start-line1 490, :count1 3, :start-line2 470, :count2 3}
+               {:start-line1 875, :count1 2, :start-line2 855, :count2 4}
+               {:start-line1 909, :count1 2, :start-line2 891, :count2 4}
+               {:start-line1 1096, :count1 2, :start-line2 1080, :count2 4}
+               {:start-line1 1175, :count1 2, :start-line2 1161, :count2 4}
+               {:start-line1 1321, :count1 3, :start-line2 1309, :count2 3}
+               {:start-line1 1359, :count1 2, :start-line2 1347, :count2 4}
+               {:start-line1 1504, :count1 3, :start-line2 1494, :count2 4}
+               {:start-line1 1528, :count1 2, :start-line2 1519, :count2 4}
+               {:start-line1 1731, :count1 2, :start-line2 1724, :count2 4}
+               {:start-line1 2024, :count1 2, :start-line2 2019, :count2 4}
+               {:start-line1 2160, :count1 3, :start-line2 2157, :count2 3}
+               {:start-line1 2364, :count1 3, :start-line2 2361, :count2 7}
+               {:start-line1 2516, :count1 2, :start-line2 2517, :count2 4}
+               {:start-line1 2588, :count1 3, :start-line2 2591, :count2 3}
+               {:start-line1 2655, :count1 2, :start-line2 2658, :count2 43}
+               {:start-line1 2743, :count1 3, :start-line2 2787, :count2 3}
+               {:start-line1 2750, :count1 3, :start-line2 2794, :count2 3}
+               {:start-line1 3015, :count1 40, :start-line2 3059, :count2 3}
+               {:start-line1 3070, :count1 3, :start-line2 3077, :count2 4}
+               {:start-line1 3097, :count1 3, :start-line2 3105, :count2 3}
+               {:start-line1 3101, :count1 3, :start-line2 3109, :count2 3}
+               {:start-line1 3145, :count1 2, :start-line2 3153, :count2 4}]]
+    (is (= 1
+           (map #(apply pd/compute-op (vals %))
+             input)))))
+
+(comment
+  (def input [{:start-line1 9, :count1 3, :start-line2 9, :count2 3}
+              {:start-line1 44, :count1 31, :start-line2 44, :count2 11}
+              {:start-line1 490, :count1 3, :start-line2 470, :count2 3}
+              {:start-line1 875, :count1 2, :start-line2 855, :count2 4}
+              {:start-line1 909, :count1 2, :start-line2 891, :count2 4}
+              {:start-line1 1096, :count1 2, :start-line2 1080, :count2 4}
+              {:start-line1 1175, :count1 2, :start-line2 1161, :count2 4}
+              {:start-line1 1321, :count1 3, :start-line2 1309, :count2 3}
+              {:start-line1 1359, :count1 2, :start-line2 1347, :count2 4}
+              {:start-line1 1504, :count1 3, :start-line2 1494, :count2 4}
+              {:start-line1 1528, :count1 2, :start-line2 1519, :count2 4}
+              {:start-line1 1731, :count1 2, :start-line2 1724, :count2 4}
+              {:start-line1 2024, :count1 2, :start-line2 2019, :count2 4}
+              {:start-line1 2160, :count1 3, :start-line2 2157, :count2 3}
+              {:start-line1 2364, :count1 3, :start-line2 2361, :count2 7}
+              {:start-line1 2516, :count1 2, :start-line2 2517, :count2 4}
+              {:start-line1 2588, :count1 3, :start-line2 2591, :count2 3}
+              {:start-line1 2655, :count1 2, :start-line2 2658, :count2 43}
+              {:start-line1 2743, :count1 3, :start-line2 2787, :count2 3}
+              {:start-line1 2750, :count1 3, :start-line2 2794, :count2 3}
+              {:start-line1 3015, :count1 40, :start-line2 3059, :count2 3}
+              {:start-line1 3070, :count1 3, :start-line2 3077, :count2 4}
+              {:start-line1 3097, :count1 3, :start-line2 3105, :count2 3}
+              {:start-line1 3101, :count1 3, :start-line2 3109, :count2 3}
+              {:start-line1 3145, :count1 2, :start-line2 3153, :count2 4}])
+  (->> input
+       (map #(apply pd/compute-op (vals %)))
+       (mapcat identity))
+
+  ,)
+
 (def commits (->> (glog/list-of-commits "git-log-unicorn.txt")
                   (glog/add-change-commit-info)
                   (map #(dissoc % :lines))))

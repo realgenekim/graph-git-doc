@@ -83,13 +83,39 @@
 
     commit2))
 
+(defn create-commits-sample!
+  []
+  (let [
+        repo-dir "/Users/genekim/book5"
+        repo-dir "../test-git-repo"
+        manuscript "manuscript-unicorn/manuscript.mmd"
+        manuscript "manuscript.md"
+        outfile "git-log.txt"
+
+        out (glog/run-git-command! repo-dir manuscript outfile)
+
+        commit1 (->> (glog/list-of-commits outfile)
+                     (glog/add-change-commit-info))
+
+        commit2 (->> commit1
+                  (map #(gw/add-word-stats-to-git-commit! % repo-dir manuscript))
+                  (map #(gw/add-timestamp-to-git-commit! % repo-dir)))]
+
+    commit2))
+
 (def commits (create-commits!))
+(def commits-sample (create-commits-sample!))
 
 (comment
   (->> commits
        (map :hash))
+  (tap> (->> commits
+          (map :changes)))
+  (tap> (->> commits
+          (map :change-ops)))
 
   (tap> commits)
+  (count commits)
 
   (->> commits
        (map gw/add-word-stats-to-git-commit!)
