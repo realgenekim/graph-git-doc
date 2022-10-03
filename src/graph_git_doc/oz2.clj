@@ -206,6 +206,26 @@
   (map :change-ops ops/commits)
   (map extract-strip-plot ops/commits))
 
+(comment
+  (def lines 4)
+  (def in  [{:a 1 :b 11}
+            {:a 2 :b 22}
+            {:a 3 :b 33}
+            {:a 4 :b 44}])
+  (def out [{:a 3 :b 11}
+            {:a 2 :b 22}
+            {:a 1 :b 33}])
+
+  (def x (->> in
+           (map :a)
+           (map #(- lines %))))
+
+  (zipmap (vec (repeat (count x) :a)) x)
+  (map :a in)
+  (map :a in)
+
+  ,)
+
 (defn extract-strip-plot-data
   " input: seq of commits
     output: vega-lite data"

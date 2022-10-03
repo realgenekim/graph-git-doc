@@ -48,6 +48,7 @@
   (def commits (->> (glog/list-of-commits "git-log.txt")
                     (glog/add-change-commit-info))))
 
+
 (comment
   commits
   (tap> commits)
