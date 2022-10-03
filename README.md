@@ -14,6 +14,10 @@ This program uses the fantastic [oz](https://github.com/metasoarous/oz) library 
 
 ![Graph](./graphs/visualization.svg)
 
+Next iteration tries to show adds/modifies/deletes:
+
+![Graph](./graphs/with-adds-deletes.png)
+
 
 ## Usage
 
