@@ -27,6 +27,8 @@ Next iteration tries to show adds/modifies/deletes:
 Honestly, I'm publishing this just so people can see
 how to use these fantastic libraries.
 
+Requires clojure 1.10, as 1.11 breaks some of the libraries
+
 ## License
 
 Copyright © 2019 Gene Kim
