@@ -113,7 +113,8 @@
         text (get-manuscript-by-commit-hash! hash path mmd)
         ;logs-with-lines (merge-in-manuscript-line-counts logs)]
         stats {:stats-num-lines (count-lines text)
-               :stats-num-words (count-words text)}]
+               :stats-num-words (count-words text)
+               :full-text text}]
     (merge commit stats)))
 
 (comment

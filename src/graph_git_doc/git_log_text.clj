@@ -7,6 +7,7 @@
           {commithash {:start-line1 4, :count1 3, :start-line2 4, :count2 3}"
   (:require
     [graph-git-doc.parse-diff :as pd]
+    [clojure.java.shell :as shell]
     [clojure.string :as s]))
 
 (def INFILE "git-log.txt")

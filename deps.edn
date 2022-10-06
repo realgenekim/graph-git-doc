@@ -1,13 +1,13 @@
 {:paths ["src" "resources"]
  :deps  {org.clojure/clojure  {:mvn/version "1.11.1"},
          ;metasoarous/oz       {:mvn/version "1.6.0-alpha34"},
-         metasoarous/oz       {:local/root "../oz"},
+
          org.clojure/data.csv {:mvn/version "1.0.1"},
          clj-jgit             {:mvn/version "0.8.10"},
          clojure.java-time    {:mvn/version "0.3.2"},
          archaeologist        {:mvn/version "0.1.1"},
-         defun                {:mvn/version "0.3.1"},
-         djblue/portal        {:mvn/version "0.30.0"}}
+         defun                {:mvn/version "0.3.1"},}
+
 
  ;genek.mdtree               {:local/root "../mdparse"}}
  :aliases
@@ -15,10 +15,12 @@
             :jvm-opts    ["-Dguardrails.enabled=true"]
             :extra-deps  {
                           ; move into separate analysis module
-                          com.lambdaisland/classpath  {:mvn/version "0.4.44"}
+                          djblue/portal        {:mvn/version "0.30.0"}
+                          ;com.lambdaisland/classpath  {:mvn/version "0.4.44"}
                           io.github.nextjournal/clerk {:mvn/version "0.10.562"}
                           applied-science/darkstar    {:git/url "https://github.com/applied-science/darkstar/"
-                                                       :sha     "541a3ff36065c59e92fe6aa61e41a4385ba6f893"}}}
+                                                       :sha     "541a3ff36065c59e92fe6aa61e41a4385ba6f893"}
+                          metasoarous/oz       {:local/root "../oz"},}}
 
   :run-m   {:main-opts ["-m" "genekim.gdoctommd"]}
   :run-x   {:ns-default graph-git-doc.ops
