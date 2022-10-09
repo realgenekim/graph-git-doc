@@ -20,7 +20,8 @@
                           io.github.nextjournal/clerk {:mvn/version "0.10.562"}
                           applied-science/darkstar    {:git/url "https://github.com/applied-science/darkstar/"
                                                        :sha     "541a3ff36065c59e92fe6aa61e41a4385ba6f893"}
-                          metasoarous/oz       {:local/root "../oz"},}}
+                          ;metasoarous/oz       {:local/root "../oz"},
+                          metasoarous/oz       {:mvn/version "2.0.0-alpha5"}}}
 
   :run-m   {:main-opts ["-m" "genekim.gdoctommd"]}
   :run-x   {:ns-default graph-git-doc.ops
