@@ -126,3 +126,43 @@
    :params [{:name "brush"
              :select {:type "interval"
                       :encodings ["x"]}}]})
+
+
+;
+; strip plots
+;
+
+
+;
+; line graph: word count
+;
+
+;
+; word count
+;
+#_ (def wc (wc/read-csv))
+
+(defn extract-wc-data [wc]
+  (->> wc
+    (map (fn [c]
+           {:date  (:date c)
+            :wordcount (:stats-num-words c)}))))
+
+
+(defn wc-line-plot [wc]
+  {:width    600
+   :data     {:values (extract-wc-data wc)}
+   :encoding {
+              :x {:field "date", :type "temporal"},
+              :y {:field "wordcount", :type "quantitative"}
+              :color {:value "firebrick"}}
+   :mark     "line"})
+
+(defn graph-wc-line-plot [commits]
+  (wc-line-plot commits))
+
+(comment
+  (extract-wc-data ops/commits)
+  (oz/v! (graph-wc-line-plot ops/commits))
+
+  ,)

@@ -70,40 +70,11 @@
 
   ,)
 
-;
-; line graph: word count
-;
 
-;
-; word count
-;
-#_ (def wc (wc/read-csv))
-
-(defn extract-wc-data [wc]
-  (->> wc
-       (map (fn [c]
-              {:date  (:date c)
-               :wordcount (:stats-num-words c)}))))
 
 #_ (xform-wc-row (first wc))
 
-(defn wc-line-plot [wc]
-  {:width    600
-   :data     {:values (extract-wc-data wc)}
-   :encoding {
-              :x {:field "date", :type "temporal"},
-              :y {:field "wordcount", :type "quantitative"}
-              :color {:value "firebrick"}}
-   :mark     "line"})
 
-(defn graph-wc-line-plot [commits]
-  (wc-line-plot commits))
-
-(comment
-  (extract-wc-data ops/commits)
-  (oz/v! (graph-wc-line-plot ops/commits))
-
-  ,)
 
 ;
 ; strip plots
@@ -230,7 +201,7 @@
 (defn composite-graph []
   {:layer [
            (oz2c/gen-strip-plot ops/commits)
-           (graph-wc-line-plot ops/commits)]
+           (oz2c/graph-wc-line-plot ops/commits)]
    :resolve {:scale {:y "independent"}}})
 
 
