@@ -1,4 +1,4 @@
-(ns graph-git-doc.ozdemo
+(ns graph-git-doc.oz1
   (:require
     [oz.core :as oz]
     [clojure.data.json :as json]

@@ -14,6 +14,10 @@ This program uses the fantastic [oz](https://github.com/metasoarous/oz) library 
 
 ![Graph](./graphs/visualization.svg)
 
+Next iteration tries to show adds/modifies/deletes:
+
+![Graph](./graphs/with-adds-deletes.png)
+
 
 ## Usage
 
@@ -22,6 +26,8 @@ This program uses the fantastic [oz](https://github.com/metasoarous/oz) library 
 
 Honestly, I'm publishing this just so people can see
 how to use these fantastic libraries.
+
+Requires clojure 1.10, as 1.11 breaks some of the libraries
 
 ## License
 

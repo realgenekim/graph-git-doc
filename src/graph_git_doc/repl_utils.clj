@@ -1,4 +1,4 @@
-(ns graph-git-doc.utils)
+(ns graph-git-doc.repl-utils)
 
 ;
 ; namespace cleanup for repl

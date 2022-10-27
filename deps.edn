@@ -1,0 +1,42 @@
+{:paths ["src" "resources"]
+ :deps  {org.clojure/clojure  {:mvn/version "1.11.1"},
+         ;metasoarous/oz       {:mvn/version "1.6.0-alpha34"},
+
+         org.clojure/data.csv {:mvn/version "1.0.1"},
+         clj-jgit             {:mvn/version "0.8.10"},
+         clojure.java-time    {:mvn/version "0.3.2"},
+         archaeologist        {:mvn/version "0.1.1"},
+         defun                {:mvn/version "0.3.1"},}
+
+
+ ;genek.mdtree               {:local/root "../mdparse"}}
+ :aliases
+ {:dev     {:extra-paths ["src/dev" "resources" "notebooks"]
+            :jvm-opts    ["-Dguardrails.enabled=true"]
+            :extra-deps  {
+                          ; move into separate analysis module
+                          djblue/portal        {:mvn/version "0.30.0"}
+                          ;com.lambdaisland/classpath  {:mvn/version "0.4.44"}
+                          io.github.nextjournal/clerk {:mvn/version "0.10.562"}
+                          applied-science/darkstar    {:git/url "https://github.com/applied-science/darkstar/"
+                                                       :sha     "541a3ff36065c59e92fe6aa61e41a4385ba6f893"}
+                          ;metasoarous/oz       {:local/root "../oz"},
+                          metasoarous/oz       {:mvn/version "2.0.0-alpha5"}}}
+
+  :run-m   {:main-opts ["-m" "genekim.gdoctommd"]}
+  :run-x   {:ns-default graph-git-doc.ops
+            :exec-fn    process}
+  ;:exec-args  {:name "Clojure"}}
+  :test    {:extra-paths ["test"]
+            :extra-deps  {org.clojure/test.check {:mvn/version "1.1.0"}
+                          io.github.cognitect-labs/test-runner
+                          {:git/url "https://github.com/cognitect-labs/test-runner"
+                           :sha     "62ef1de18e076903374306060ac0e8a752e57c86"}}
+            :exec-fn     cognitect.test-runner.api/test}
+  :uberjar {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.278"}}
+            :exec-fn      hf.depstar/uberjar
+            :exec-args    {:aot        true
+                           :jar        "gdoctommd.jar"
+                           :main-class "genekim.gdoctommd"
+                           :sync-pom   true}}}}
+
